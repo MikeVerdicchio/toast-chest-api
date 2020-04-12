@@ -12,7 +12,7 @@ EXPOSE 8080
 CMD ["/app/cmd/toast/toast"]
 
 # Production image
-FROM golang:1.14-alpine
+FROM alpine
 WORKDIR /app
 COPY --from=development /app/cmd/toast .
 
