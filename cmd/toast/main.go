@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -14,6 +15,8 @@ import (
 const (
 	// ApplicationName is the name of the service
 	ApplicationName = "toast-api"
+	// DefaultToast is the default toast to show when there is an error
+	DefaultToast = "Here's to friendship, here's to great times, and here's to when the Toast Chest isn't around."
 )
 
 func main() {
@@ -41,4 +44,12 @@ func ConfigureHandlers(r *mux.Router) {
 	healthHandler := health.ConfigureHealthHandler()
 	r.HandleFunc("/live", healthHandler.LiveEndpoint).Methods(http.MethodGet)
 	r.HandleFunc("/ready", healthHandler.ReadyEndpoint).Methods(http.MethodGet)
+
+	// Random toast endpoint
+	r.HandleFunc("/", RandomToastHandler).Methods(http.MethodGet)
+}
+
+// RandomToastHandler returns a random toast
+func RandomToastHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, DefaultToast)
 }
