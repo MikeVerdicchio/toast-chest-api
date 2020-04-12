@@ -25,9 +25,9 @@ clean: stop
 	@docker-compose rm --force
 
 # Collect go modules
-vendor:
+collect-vendor:
 	@docker-compose run --rm api \
-		go mod tidy && go mod vendor
+		ash -c "go mod tidy && go mod vendor"
 
 # Formats source code
 fmt:
