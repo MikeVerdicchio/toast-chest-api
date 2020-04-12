@@ -2,10 +2,8 @@ version: "3.5"
 
 services:
   api:
-    build:
-      context: .
-      target: development
-    container_name: toast-api
+    build: .
+    container_name: toast-api-prod
     restart: on-failure
     depends_on:
       - db
@@ -13,8 +11,6 @@ services:
       - .env
     ports:
       - 8080:8080
-    volumes:
-      - .:/app
 
   db:
     image: postgres:11.7-alpine
