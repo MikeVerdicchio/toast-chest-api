@@ -26,7 +26,7 @@ func main() {
 	router := mux.NewRouter()
 	ConfigureHandlers(router)
 
-	port := os.Getenv("LISTEN_PORT")
+	port := os.Getenv("PORT")
 	server := &http.Server{
 		Handler:      router,
 		Addr:         ":" + port,
