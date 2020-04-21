@@ -1,11 +1,11 @@
 # Development / builder image
 FROM golang:1.14-alpine as development
+RUN apk add --no-cache make
 
 WORKDIR /app
 COPY . .
 
-RUN GOFLAGS=-mod=vendor GOOS=linux GOARCH=amd64 CGO_ENABLED=0 \
-    cd cmd/toast && go build -o toast main.go
+RUN make build-linux
 
 ENV PORT 8080
 EXPOSE 8080

@@ -29,16 +29,18 @@ build-prod:
 	@docker-compose -f docker-compose-prod.yml pull
 	@docker-compose -f docker-compose-prod.yml build
 
+# Builds go application for linux
+build-linux:
+	GOFLAGS=-mod=vendor GOOS=linux GOARCH=amd64 CGO_ENABLED=0 cd cmd/toast && go build -o toast main.go
+
 # Cleans up all images
 clean: stop
 	@docker-compose rm --force
 
 # Collect go modules
 vendor:
-	@docker-compose run --rm api \
-		ash -c "go mod tidy && go mod vendor"
+	go mod tidy && go mod vendor
 
 # Formats source code
 fmt:
-	@docker-compose run --rm api \
-		go fmt ./...
+	go fmt ./...
