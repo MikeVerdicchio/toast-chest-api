@@ -32,7 +32,12 @@ func main() {
 	logger.Info("Setting up database connection")
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		logger.Error("Could not connect to database")
+		logger.Error("Could not setup database")
+	}
+
+	err = db.Ping()
+	if err != nil {
+		logger.Fatal("Could not establish a connection with the database")
 	}
 
 	// Setup router and handlers
