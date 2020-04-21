@@ -2,14 +2,12 @@ package controllers
 
 import (
 	"database/sql"
+	"encoding/json"
 
-	"fmt"
 	"net/http"
 
+	"github.com/MikeVerdicchio/toast-chest-api/internal/toast"
 	log "github.com/sirupsen/logrus"
-
-	// Used for defining sql.DB
-	_ "github.com/lib/pq"
 )
 
 const (
@@ -33,10 +31,28 @@ func NewBaseHandler(db *sql.DB, logger *log.Entry) *BaseHandler {
 
 // RandomToastHandler returns a random toast
 func (h *BaseHandler) RandomToastHandler(w http.ResponseWriter, r *http.Request) {
-	if err := h.db.Ping(); err != nil {
-		h.logger.Error("Could not ping database")
+	h.logger.Info("Handling RandomToastHandler request")
+
+	var t toast.Toast
+	if err := t.GetRandomToast(h.db); err != nil {
+		h.logger.Error("Could not pull toast from database")
+		t.Toast = DefaultToast
 	}
 
-	h.logger.Info("RandomToastHandler handled")
-	fmt.Fprint(w, DefaultToast)
+	returnJSON(w, http.StatusOK, t)
+}
+
+func returnJSON(w http.ResponseWriter, code int, payload interface{}) {
+	response, _ := json.Marshal(payload)
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	_, err := w.Write(response)
+	if err != nil {
+		log.WithError(err).Error("Error writing response")
+	}
+}
+
+func returnJSONError(w http.ResponseWriter, code int, message string) {
+	returnJSON(w, code, map[string]string{"error": message})
 }

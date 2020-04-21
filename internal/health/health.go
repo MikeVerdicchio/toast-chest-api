@@ -5,9 +5,6 @@ import (
 	"time"
 
 	"github.com/heptiolabs/healthcheck"
-
-	// Used for defining sql.DB
-	_ "github.com/lib/pq"
 )
 
 // ConfigureHealthHandler creates and configures a custom healthcheck handler
