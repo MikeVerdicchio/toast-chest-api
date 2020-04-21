@@ -7,10 +7,7 @@ CMD_DIR := toast
 
 # Starts all containers
 start:
-	@docker-compose up
-
-start-prod:
-	@docker-compose -f docker-compose-prod.yml up
+	@docker-compose up api
 
 # Stops all containers
 stop:
@@ -22,12 +19,11 @@ cli:
 
 # Builds and pulls all images
 build:
-	@docker-compose pull
 	@docker-compose build
 
-build-prod:
-	@docker-compose -f docker-compose-prod.yml pull
-	@docker-compose -f docker-compose-prod.yml build
+# Builds go application for linux
+build-linux:
+	GOFLAGS=-mod=vendor GOOS=linux GOARCH=amd64 CGO_ENABLED=0 cd cmd/toast && go build -o toast main.go
 
 # Cleans up all images
 clean: stop
@@ -35,10 +31,13 @@ clean: stop
 
 # Collect go modules
 vendor:
-	@docker-compose run --rm api \
-		ash -c "go mod tidy && go mod vendor"
+	go mod tidy && go mod vendor
 
 # Formats source code
 fmt:
-	@docker-compose run --rm api \
-		go fmt ./...
+	go fmt ./...
+
+# Lints the source code - use docker-compose as WSL won't properly map volumes
+lint:
+	@docker-compose up linter
+	# docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.24.0 golangci-lint run -v

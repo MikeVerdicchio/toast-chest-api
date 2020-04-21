@@ -2,25 +2,18 @@ version: "3.5"
 
 services:
   api:
-    build:
-      context: .
-      target: development
+    build: .
     container_name: toast-api
     restart: on-failure
-    depends_on:
-      - db
     env_file:
       - .env
     ports:
       - 8080:8080
+
+  # Lint container since WSL won't map volumes in docker
+  linter:
+    image: golangci/golangci-lint:v1.24.0
+    working_dir: /app
+    command: golangci-lint run -v
     volumes:
       - .:/app
-
-  db:
-    image: postgres:11.7-alpine
-    container_name: toast-db
-    restart: always
-    env_file:
-      - .env
-    ports:
-      - 5432:5432
