@@ -12,7 +12,6 @@ import (
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
 
-	// Used for defining sql.DB
 	_ "github.com/lib/pq"
 )
 
