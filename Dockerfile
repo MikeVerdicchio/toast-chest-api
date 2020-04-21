@@ -3,7 +3,6 @@ RUN apk add --no-cache make
 
 WORKDIR /app
 COPY . .
-
 RUN make build-linux
 
 # Production image

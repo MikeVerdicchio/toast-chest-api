@@ -7,7 +7,7 @@ CMD_DIR := toast
 
 # Starts all containers
 start:
-	@docker-compose up api
+	@docker-compose up --build api
 
 # Stops all containers
 stop:
@@ -16,10 +16,6 @@ stop:
 # Starts a shell in web container
 cli:
 	@docker-compose run --rm api ash
-
-# Builds and pulls all images
-build:
-	@docker-compose build
 
 # Builds go application for linux
 build-linux:
