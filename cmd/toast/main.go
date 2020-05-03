@@ -3,11 +3,13 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"net/url"
 	"os"
 	"time"
 
 	"github.com/MikeVerdicchio/toast-chest-api/internal/controllers"
 	"github.com/MikeVerdicchio/toast-chest-api/internal/health"
+	"github.com/gorilla/handlers"
 
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -43,7 +45,8 @@ func main() {
 	logger.Info("Setting up router and handlers")
 	router := mux.NewRouter()
 	baseHandler := controllers.NewBaseHandler(db, logger)
-	ConfigureHandlers(router, db, baseHandler)
+	configureHandlers(router, db, baseHandler)
+	configureCORS(router)
 
 	server := &http.Server{
 		Handler:      router,
@@ -56,8 +59,8 @@ func main() {
 	log.Fatal(server.ListenAndServe())
 }
 
-// ConfigureHandlers configures all routes for application
-func ConfigureHandlers(r *mux.Router, db *sql.DB, h *controllers.BaseHandler) {
+// configureHandlers configures all routes for application
+func configureHandlers(r *mux.Router, db *sql.DB, h *controllers.BaseHandler) {
 	// Add health check endpoints
 	healthHandler := health.ConfigureHealthHandler(db)
 	r.HandleFunc("/live", healthHandler.LiveEndpoint).Methods(http.MethodGet)
@@ -65,4 +68,19 @@ func ConfigureHandlers(r *mux.Router, db *sql.DB, h *controllers.BaseHandler) {
 
 	// Random toast endpoint
 	r.HandleFunc("/", h.RandomToastHandler).Methods(http.MethodGet)
+}
+
+// configureCORS configures CORS for application
+func configureCORS(r *mux.Router) {
+	uiURL := url.URL{
+		Scheme: "https",
+		Host:   os.Getenv("UI_HOST"),
+	}
+	cors := handlers.CORS(
+		handlers.AllowedHeaders([]string{"content-type"}),
+		handlers.AllowedOrigins([]string{uiURL.String()}),
+		handlers.AllowedMethods([]string{"OPTIONS", "GET"}),
+	)
+
+	r.Use(cors)
 }
