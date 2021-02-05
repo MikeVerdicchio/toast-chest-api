@@ -68,6 +68,13 @@ func configureHandlers(r *mux.Router, db *sql.DB, h *controllers.BaseHandler) {
 
 	// Random toast endpoint
 	r.HandleFunc("/", h.RandomToastHandler).Methods(http.MethodGet)
+
+	router.HandleFunc("/book/", controllers.CreateBook).Methods("POST")
+	router.HandleFunc("/book/", controllers.GetBook).Methods("GET")
+	router.HandleFunc("/book/{bookId}", controllers.GetBookById).Methods("GET")
+	router.HandleFunc("/book/{bookId}", controllers.UpdateBook).Methods("PUT")
+	router.HandleFunc("/book/{bookId}", controllers.DeleteBook).Methods("DELETE")
+
 }
 
 // configureCORS configures CORS for application
